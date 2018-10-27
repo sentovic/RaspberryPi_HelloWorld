@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Raspberry Pi</title>
+<script>
+	function updateSystemInfo() {
+		var systemInfo = new XMLHttpRequest();
+		systemInfo.open("GET", "/SystemInfo", true);
+		systemInfo.onreadystatechange = function() {
+			if ((systemInfo.readyState == 2 || systemInfo.readyState == 4)
+  			    && systemInfo.status == 200) {
+				var info = JSON.parse(systemInfo.responseText);
+				if (info != null) {
+				    var ul = document.getElementById("system_info");
+					
+					// Remove all <li>
+					while(ul.hasChildNodes()) {
+						ul.removeChild(ul.firstChild);
+					}
+					
+					// Add cpu
+					for (var i = 0, count = info.cpus.length; i < count; i++) {
+					    var cpu = info.cpus[i];
+					    ul.innerHTML += "<li> CPU: " + (cpu.speed / 1000.0) + "GHz</li>";
+					}
+					
+					// Add mem
+					ul.innerHTML += "<li> RAM: " + (info.memory.free / 1024.0 / 1024.0) + "MB / " + (info.memory.total / 1024.0 / 1024.0) + "MB</li>";
+				}
+			}
+		};
+		systemInfo.send();		
+	}
+	
+</script>
+</head>
+<body onload="updateSystemInfo(); window.setInterval(updateSystemInfo, 1000);">
+    <h1>Raspberry Pi</h1>
+    <ul id="system_info"></ul>
+</body>
+</html>
