@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INC_DIRS="-I src/include -I src/include/lang -I src/include/app -I src/include/message"
+INC_DIRS="-I include -I include/lang -I include/app -I include/message"
 LIBS="-lpthread"
 rm -rf build
 mkdir build

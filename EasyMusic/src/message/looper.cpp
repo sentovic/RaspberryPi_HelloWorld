@@ -7,7 +7,7 @@
 namespace cobox {
 
     Looper::Looper() : mIsAlive(false) {
-        
+
     }
 
     Looper::~Looper() {
@@ -16,7 +16,7 @@ namespace cobox {
 
     void Looper::loop(bool isSync) {
         std::cout << "[Looper][loop]" << std::endl;;
-    
+
         if (mIsAlive = (pthread_create(&mThread, NULL, guardRun, this) == 0)) {
             // TODO
         } else {
@@ -42,12 +42,9 @@ namespace cobox {
     bool Looper::queueMessage(Message* message, bool rejectIfNotAlive) {
         std::cout << "[Looper][queueMessage] what is " << message->what << std::endl;
         if ((message != NULL) && (rejectIfNotAlive && mIsAlive)) {
-            std::unique_lock<std::mutex> lock(mMessageQueueMutex);
-            lock.lock();
-            {
+            {std::unique_lock<std::mutex> lock(mMessageQueueMutex);
                 mMessageQueue.push(message);
             }
-            lock.unlock();
 
             std::cout << "[Looper][queueMessage] queued message what is " << message->what << std::endl;
             mMessageQueueEmptyCondition.notify_all();
@@ -70,36 +67,24 @@ namespace cobox {
     void Looper::run() {
         std::cout << "[Looper][run]" << std::endl;
         while (mIsAlive) {
-            std::cout << "[Looper][run] #1" << std::endl;
             std::unique_lock<std::mutex> lock(mMessageQueueMutex);
             if (mMessageQueue.empty()) {
-                std::cout << "[Looper][run] #1.1" << std::endl;
                 mMessageQueueEmptyCondition.wait(lock, [this] {
                     return !this->mMessageQueue.empty();
                 });
-                std::cout << "[Looper][run] #1.2" << std::endl;
             }
 
-            std::cout << "[Looper][run] #2" << std::endl;
-            lock.lock();
-            {
-                std::cout << "[Looper][run] #2.1" << std::endl;
-                Message* message = mMessageQueue.front();
-                if (message != NULL) {
-                    std::cout << "[Looper][run] #2.2" << std::endl;
-                    mMessageQueue.pop();
+            Message* message = mMessageQueue.front();
+            if (message != NULL) {
+                mMessageQueue.pop();
 
-                    Handler* handler = message->getTarget();
-                    if (handler != NULL) {
-                        std::cout << "[Looper][run] #2.3" << std::endl;
-                        handler->handleMessage(message);
-                    }
+                Handler* handler = message->getTarget();
+                if (handler != NULL) {
+                    handler->handleMessage(message);
+                } else {
+                    std::cerr << "[Looper][run] the handler of message is null" << std::endl;
                 }
             }
-            lock.unlock();
-            std::cout << "[Looper][run] #3" << std::endl;
-
-            std::cout << "[Looper][run] mIsAlive = " << mIsAlive << std::endl;
         }
         std::cout << "[Looper][run] quit message queue loop" << std::endl;
     }

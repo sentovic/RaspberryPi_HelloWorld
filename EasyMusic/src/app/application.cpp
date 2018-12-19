@@ -4,7 +4,7 @@
 namespace cobox {
 
     Application::Application() : Looper() {
-        mApplicationHandler = new Handler(this);
+        mApplicationHandler = new Handler(this, (HandleMessageCallback*)onHandleMessage);
     }
 
     Application::~Application() {
@@ -21,4 +21,12 @@ namespace cobox {
         mApplicationHandler->sendEmptyMessage(Application::MSG_APP_START);
         Looper::run();
     }
+
+    void Application::onHandleMessage(Message* message) {
+
+    }
+
+    void Application::onCreate() {}
+
+    void Application::onDestroy() {}
 }
