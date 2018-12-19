@@ -1,12 +1,15 @@
 #include "looper.h"
 #include <iostream>
 #include <memory.h>
-#include <pthread.h>
+#include <thread>
 #include "message.h"
 
 namespace cobox {
 
-    Looper::Looper() : mIsAlive(false) {
+    Looper::Looper() : 
+                     mIsAlive(false), 
+                     mIsReleased(false), 
+                     mThread(Looper::guardRun, this) {
         
     }
 
@@ -15,23 +18,19 @@ namespace cobox {
     }
 
     void Looper::loop(bool isSync) {
-        std::cout << "[Looper][loop]" << std::endl;;
-    
-        if (mIsAlive = (pthread_create(&mThread, NULL, guardRun, this) == 0)) {
-            // TODO
-        } else {
-            std::cerr << "[" __FILE__ "] create looper thread failed!" << std::endl;
-            memset(&mThread, 0, sizeof(pthread_t));
-            return;
-        }
+        std::cout << "[Looper][loop]" << std::endl;
 
+        mIsAlive = true;
+        
         if (isSync) {
-            pthread_join(mThread, NULL);
+            mThread.join();
+        } else {
+            mThread.detach();
         }
     }
 
     void Looper::release() {
-        pthread_exit(NULL);
+        mIsReleased = true;
     }
 
     void Looper::quit() {
@@ -40,17 +39,23 @@ namespace cobox {
     }
 
     bool Looper::queueMessage(Message* message, bool rejectIfNotAlive) {
+        if (mIsReleased) {
+            std::cerr << "[Looper][queueMessage] cannot queue message to a released looper" << std::endl;
+            return false;
+        }
+
         std::cout << "[Looper][queueMessage] what is " << message->what << std::endl;
         if ((message != NULL) && (rejectIfNotAlive && mIsAlive)) {
-            std::unique_lock<std::mutex> lock(mMessageQueueMutex);
-            lock.lock();
-            {
+            mMessageQueueMutex.lock();
+            try {
                 mMessageQueue.push(message);
+            } catch(...) {
+                // TODO
             }
-            lock.unlock();
-
             std::cout << "[Looper][queueMessage] queued message what is " << message->what << std::endl;
             mMessageQueueEmptyCondition.notify_all();
+            mMessageQueueMutex.unlock();
+
             return true;
         } else {
             return false;
@@ -70,36 +75,35 @@ namespace cobox {
     void Looper::run() {
         std::cout << "[Looper][run]" << std::endl;
         while (mIsAlive) {
-            std::cout << "[Looper][run] #1" << std::endl;
-            std::unique_lock<std::mutex> lock(mMessageQueueMutex);
-            if (mMessageQueue.empty()) {
-                std::cout << "[Looper][run] #1.1" << std::endl;
-                mMessageQueueEmptyCondition.wait(lock, [this] {
-                    return !this->mMessageQueue.empty();
-                });
-                std::cout << "[Looper][run] #1.2" << std::endl;
-            }
+            Message* message = nullptr;
 
-            std::cout << "[Looper][run] #2" << std::endl;
-            lock.lock();
+            // Dequeue message
             {
-                std::cout << "[Looper][run] #2.1" << std::endl;
-                Message* message = mMessageQueue.front();
-                if (message != NULL) {
-                    std::cout << "[Looper][run] #2.2" << std::endl;
-                    mMessageQueue.pop();
-
-                    Handler* handler = message->getTarget();
-                    if (handler != NULL) {
-                        std::cout << "[Looper][run] #2.3" << std::endl;
-                        handler->handleMessage(message);
+                std::unique_lock<std::mutex> ulock(mMessageQueueMutex);
+                try {
+                    if (mMessageQueue.empty()) {
+                        mMessageQueueEmptyCondition.wait(ulock, [this] {
+                            return !this->mMessageQueue.empty();
+                        });
                     }
+
+                    message = mMessageQueue.front();
+                    if (message != nullptr) {
+                        mMessageQueue.pop();
+                    }
+                } catch (...) {
+                    // TODO
                 }
             }
-            lock.unlock();
-            std::cout << "[Looper][run] #3" << std::endl;
 
-            std::cout << "[Looper][run] mIsAlive = " << mIsAlive << std::endl;
+            // Handle message
+            if (message != NULL) {
+                Handler* handler = message->getTarget();
+                if (handler != NULL) {
+                    handler->handleMessage(message);
+                }
+            }
+
         }
         std::cout << "[Looper][run] quit message queue loop" << std::endl;
     }

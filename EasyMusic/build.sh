@@ -1,7 +1,7 @@
 #!/bin/bash
 
-INC_DIRS="-I src/include -I src/include/lang -I src/include/app -I src/include/message"
-LIBS="-lpthread"
+INC_DIRS="-I include -I include/lang -I include/app -I include/message"
+LIBS="-lpthread -std=c++11"
 rm -rf build
 mkdir build
 mkdir build/obj
