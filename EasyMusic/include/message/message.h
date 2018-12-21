@@ -15,10 +15,10 @@ namespace cobox {
             ~Message();
             void     bindTarget(Handler* target);
             Handler* getTarget();
-            void     toString(std::ostream& out);
 
         public:
             void     sendToTarget();
+            void     toString(std::ostream& out);
 
         public:
             int      what;
@@ -29,6 +29,10 @@ namespace cobox {
         private:
             Handler* mTarget;
             Runnable mCallback;
+            long     mMessageTime;
+
+        private:
+            static const long TIME_IGNORE = -1;
     };
 }
 

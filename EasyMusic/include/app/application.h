@@ -13,9 +13,13 @@ namespace cobox {
         ~Application();
 
         void loop();
+        void exit();
 
     protected:
         void run();
+        virtual void onCreated();
+        virtual void onDestroy();
+        virtual void onHandleMessage(Message* message);
 
     protected:
         static const int MSG_APP_START = 0x1000;

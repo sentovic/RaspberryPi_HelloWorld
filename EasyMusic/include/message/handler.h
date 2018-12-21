@@ -18,6 +18,7 @@ namespace cobox {
             void sendEmptyMessage(int what);
             void removeAllMeesagesAndCallbacks();
             void post(Runnable runnable);
+            void postDelayed(Runnable runnable, long millsecond);
 
         protected:
             friend class Looper;

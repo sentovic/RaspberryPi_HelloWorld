@@ -9,7 +9,8 @@ namespace cobox {
                        arg1(0),
                        arg2(0),
                        anything(NULL),
-                       mCallback(NULL) {
+                       mCallback(NULL),
+                       mMessageTime(TIME_IGNORE) {
 
     }
 

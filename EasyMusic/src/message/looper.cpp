@@ -21,7 +21,7 @@ namespace cobox {
         std::cout << "[Looper][loop]" << std::endl;
 
         mIsAlive = true;
-        
+
         if (isSync) {
             mThread.join();
         } else {
