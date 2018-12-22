@@ -1,5 +1,4 @@
-#ifndef LOOPER_H
-#define LOOPER_H
+#pragma once
 
 #include <stdbool.h>
 #include <queue>
@@ -27,6 +26,7 @@ namespace cobox {
 
     private:
         static void* guardRun(void* looper);
+        void sortMessageQueueByTime();
 
     private:
         std::thread             mThread;
@@ -38,5 +38,3 @@ namespace cobox {
     };
 
 }
-
-#endif

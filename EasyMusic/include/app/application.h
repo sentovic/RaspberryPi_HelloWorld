@@ -1,5 +1,4 @@
-#ifndef APPLICATION_H
-#define APPLICATION_H
+#pragma once
 
 #include "looper.h"
 #include "handler.h"
@@ -30,5 +29,3 @@ namespace cobox {
     };
 
 }
-
-#endif

@@ -1,10 +1,7 @@
-#ifndef LANG_H
-#define LANG_H
+#pragma once
 
 namespace cobox {
 
     typedef void*(*Runnable)(void*);
     
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#pragma once
 
 #include "lang.h"
 #include "handler.h"
@@ -29,11 +28,9 @@ namespace cobox {
         private:
             Handler* mTarget;
             Runnable mCallback;
-            long     mMessageTime;
+            uint64_t mMessageTime;
 
         private:
-            static const long TIME_IGNORE = -1;
+            static const uint64_t TIME_IGNORE = 0;
     };
 }
-
-#endif

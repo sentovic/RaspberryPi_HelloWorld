@@ -1,5 +1,4 @@
-#ifndef HANDLER_H
-#define HANDLER_H
+#pragma once
 
 #include "lang.h"
 #include "looper.h"
@@ -15,10 +14,12 @@ namespace cobox {
             ~Handler();
         
             void sendMessage(Message* message);
+            void sendMessageDelayed(Message* message, uint64_t delay);
             void sendEmptyMessage(int what);
+            void sendEmptyMessageDelayed(int what, uint64_t delay);
             void removeAllMeesagesAndCallbacks();
             void post(Runnable runnable);
-            void postDelayed(Runnable runnable, long millsecond);
+            void postDelayed(Runnable runnable, uint64_t delay);
 
         protected:
             friend class Looper;
@@ -29,5 +30,3 @@ namespace cobox {
             std::function<void (Message*)> mHandleMessageCallback;
     };
 }
-
-#endif

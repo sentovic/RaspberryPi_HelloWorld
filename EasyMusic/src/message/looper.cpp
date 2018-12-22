@@ -49,6 +49,7 @@ namespace cobox {
             mMessageQueueMutex.lock();
             try {
                 mMessageQueue.push(message);
+                sortMessageQueueByTime();
             } catch(...) {
                 // TODO
             }
@@ -60,6 +61,10 @@ namespace cobox {
         } else {
             return false;
         }
+    }
+
+    void Looper::sortMessageQueueByTime() {
+        // TODO
     }
 
     void* Looper::guardRun(void* rawLooper) {

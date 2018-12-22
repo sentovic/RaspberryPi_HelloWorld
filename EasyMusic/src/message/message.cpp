@@ -37,6 +37,10 @@ namespace cobox {
     }
 
     void Message::toString(std::ostream& out) {
-        out << "Message[what=" << this->what << ", callback=" << this->mCallback << "]";
+        out << "{ when=" << this->mMessageTime
+            << ", what=" << this->what
+            << ", target=" << this->mTarget
+            << ", callback=" << this->mCallback
+            << " }";
     }
 }

@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <iostream>
 #include "message.h"
+#include "system.h"
 
 namespace cobox {
 
@@ -16,22 +17,32 @@ namespace cobox {
     }
 
     void Handler::sendMessage(Message* message) {
+        sendMessageDelayed(message, 0);
+    }
+
+    void Handler::sendMessageDelayed(Message* message, uint64_t delay) {
         if (message == nullptr) {
             return;
         }
         std::cout << "[Handler][sendMessage] what is " << message->what << std::endl;
 
-        message->mTarget = this;
+        message->mMessageTime = System::millsecond() + delay;
+        message->mTarget      = this;
         if (mLooper != nullptr) {
             mLooper->queueMessage(message);
         }
     }
 
     void Handler::sendEmptyMessage(int what) {
+        sendEmptyMessageDelayed(what, 0);
+    }
+
+    void Handler::sendEmptyMessageDelayed(int what, uint64_t delay) {
         std::cout << "[Handler][sendEmptyMessage] what is " << what << std::endl;
         Message* msg = new Message();
-        msg->mTarget = this;
-        msg->what = what;
+        msg->mTarget      = this;
+        msg->mMessageTime = System::millsecond() + delay;
+        msg->what         = what;
         if (mLooper != nullptr) {
             mLooper->queueMessage(msg);
         }
@@ -45,13 +56,18 @@ namespace cobox {
     }
 
     void Handler::post(Runnable runnable) {
+        postDelayed(runnable, 0);
+    }
+
+    void Handler::postDelayed(Runnable runnable, uint64_t delay) {
         if (runnable == nullptr) {
             return;
         }
 
         Message* msg = new Message();
-        msg->mTarget = this;
-        msg->mCallback = runnable;
+        msg->mTarget      = this;
+        msg->mMessageTime = System::millsecond() + delay;
+        msg->mCallback    = runnable;
         if (mLooper != nullptr) {
             mLooper->queueMessage(msg);
         }
