@@ -7,9 +7,10 @@
 namespace cobox {
 
     class Message {
-        protected:
         friend class Handler;
         friend class Looper;
+        
+        protected:
             Message();
             ~Message();
             void     bindTarget(Handler* target);

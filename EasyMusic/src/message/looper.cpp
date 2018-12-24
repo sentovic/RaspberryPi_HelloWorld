@@ -3,6 +3,7 @@
 #include <memory.h>
 #include <thread>
 #include "message.h"
+#include <algorithm>
 
 namespace cobox {
 
@@ -48,7 +49,7 @@ namespace cobox {
         if ((message != NULL) && (rejectIfNotAlive && mIsAlive)) {
             mMessageQueueMutex.lock();
             try {
-                mMessageQueue.push(message);
+                mMessageQueue.push_back(message);
                 sortMessageQueueByTime();
             } catch(...) {
                 // TODO
@@ -64,7 +65,9 @@ namespace cobox {
     }
 
     void Looper::sortMessageQueueByTime() {
-        // TODO
+        std::stable_sort(mMessageQueue.begin(), mMessageQueue.end(), [](Message* msgA, Message* msgB) {
+            return msgA->mMessageTime - msgB->mMessageTime;
+        });
     }
 
     void* Looper::guardRun(void* rawLooper) {
@@ -94,7 +97,7 @@ namespace cobox {
 
                     message = mMessageQueue.front();
                     if (message != nullptr) {
-                        mMessageQueue.pop();
+                        mMessageQueue.pop_front();
                     }
                 } catch (...) {
                     // TODO
@@ -114,7 +117,6 @@ namespace cobox {
     }
 
     void Looper::cleanMessageQueue() {
-        std::queue<Message*> empty;
-        swap(empty, mMessageQueue);
+        mMessageQueue.clear();
     }
 }

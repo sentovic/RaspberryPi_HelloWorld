@@ -32,7 +32,7 @@ namespace cobox {
         std::thread             mThread;
         bool                    mIsAlive;
         bool                    mIsReleased;
-        std::queue<Message*>    mMessageQueue;
+        std::deque<Message*>    mMessageQueue;
         std::mutex              mMessageQueueMutex;
         std::condition_variable mMessageQueueEmptyCondition;
     };
