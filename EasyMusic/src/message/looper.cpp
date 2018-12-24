@@ -3,6 +3,7 @@
 #include <memory.h>
 #include <thread>
 #include "message.h"
+#include "system.h"
 #include <algorithm>
 
 namespace cobox {
@@ -66,7 +67,7 @@ namespace cobox {
 
     void Looper::sortMessageQueueByTime() {
         std::stable_sort(mMessageQueue.begin(), mMessageQueue.end(), [](Message* msgA, Message* msgB) {
-            return msgA->mMessageTime - msgB->mMessageTime;
+            return msgA->mMessageTime < msgB->mMessageTime;
         });
     }
 
@@ -97,6 +98,14 @@ namespace cobox {
 
                     message = mMessageQueue.front();
                     if (message != nullptr) {
+                        // Check message timestamp
+                        uint64_t now = System::millsecond();
+                        uint64_t deltaTime = (message->mMessageTime - now);
+                        if (deltaTime > 0) {
+                            mMessageDelayCondition.wait_for(ulock, std::chrono::milliseconds(deltaTime));
+                            continue;
+                        }
+
                         mMessageQueue.pop_front();
                     }
                 } catch (...) {

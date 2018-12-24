@@ -35,6 +35,7 @@ namespace cobox {
         std::deque<Message*>    mMessageQueue;
         std::mutex              mMessageQueueMutex;
         std::condition_variable mMessageQueueEmptyCondition;
+        std::condition_variable mMessageDelayCondition;
     };
 
 }

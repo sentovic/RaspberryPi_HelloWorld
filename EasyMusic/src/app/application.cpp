@@ -19,6 +19,7 @@ namespace cobox {
     void Application::run() {
         std::cout << "[Application][run]" << std::endl;
         mApplicationHandler->sendEmptyMessage(Application::MSG_APP_START);
+        mApplicationHandler->sendEmptyMessageDelayed(Application::MSG_APP_STOP, 5000);
         Looper::run();
     }
 
