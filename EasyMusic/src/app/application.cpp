@@ -1,5 +1,5 @@
 #include "application.h"
-#include <iostream>
+#include "log.h"
 
 namespace cobox {
 
@@ -12,19 +12,15 @@ namespace cobox {
     }
 
     void Application::loop() {
-        std::cout << "[Application][loop]" << std::endl;
+        Log::d("Application", "[loop]");
         Looper::loop(true);
     }
 
     void Application::run() {
-        std::cout << "[Application][run]" << std::endl;
+        Log::d("Application", "[run]");
         mApplicationHandler->sendEmptyMessage(Application::MSG_APP_START);
-
         {// Debug
-            mApplicationHandler->post([]() {
-                std::cout << "[Application][run] ==== Runnable ====" << std::endl;
-            });
-            mApplicationHandler->sendEmptyMessageDelayed(Application::MSG_APP_STOP, 5000);
+            mApplicationHandler->sendEmptyMessage(Application::MSG_APP_STOP);
         }
         Looper::run();
     }
@@ -36,18 +32,18 @@ namespace cobox {
         
         switch (message->what) {
             case Application::MSG_APP_START: {
-                std::cout << "[Application][onHandleMessage] MSG_APP_START" << std::endl;
+                Log::i("Application", "[onHandleMessage] MSG_APP_START");
                 onCreated();
             } break;
 
             case Application::MSG_APP_STOP: {
-                std::cout << "[Application][onHandleMessage] MSG_APP_STOP" << std::endl;
+                Log::i("Application", "[onHandleMessage] MSG_APP_STOP");
                 onDestroy();
                 quit();
             } break;
 
             case Application::MSG_APP_CONFIG_CHANGE: {
-                std::cout << "[Application][onHandleMessage] MSG_APP_CONFIG_CHANGE" << std::endl;
+                Log::i("Application", "[onHandleMessage] MSG_APP_CONFIG_CHANGE");
             } break;
 
             default: break;
@@ -55,16 +51,16 @@ namespace cobox {
     }
 
     void Application::exit() {
-        std::cout << "[Application][exit]" << std::endl;
+        Log::i("Application", "[exit]");
         mApplicationHandler->sendEmptyMessage(Application::MSG_APP_STOP);
     }
 
     void Application::onCreated() {
-        std::cout << "[Application][onCreated]" << std::endl;
+        Log::i("Application", "[onCreated]");
     }
 
     void Application::onDestroy() {
-        std::cout << "[Application][onDestroy]" << std::endl;
+        Log::i("Application", "[onDestroy]");
     }
 
 

@@ -1,5 +1,5 @@
 #include "looper.h"
-#include <iostream>
+#include "log.h"
 #include <memory.h>
 #include <thread>
 #include "message.h"
@@ -20,7 +20,7 @@ namespace cobox {
     }
 
     void Looper::loop(bool isSync) {
-        std::cout << "[Looper][loop]" << std::endl;
+        Log::d("Looper", "[loop]");
 
         mIsAlive = true;
 
@@ -36,17 +36,17 @@ namespace cobox {
     }
 
     void Looper::quit() {
-        std::cout << "[Looper][quit]" << std::endl;
+        Log::i("Looper", "[quit]");
         mIsAlive = false;
     }
 
     bool Looper::queueMessage(Message* message, bool rejectIfNotAlive) {
         if (mIsReleased) {
-            std::cerr << "[Looper][queueMessage] cannot queue message to a released looper" << std::endl;
+            Log::e("Looper", "[queueMessage] cannot queue message to a released looper");
             return false;
         }
 
-        std::cout << "[Looper][queueMessage] what is " << message->what << std::endl;
+        Log::d("Looper", "[queueMessage] what is %d", message->what);
         if ((message != NULL) && (rejectIfNotAlive && mIsAlive)) {
             mMessageQueueMutex.lock();
             try {
@@ -55,7 +55,8 @@ namespace cobox {
             } catch(...) {
                 // TODO
             }
-            std::cout << "[Looper][queueMessage] queued message what is " << message->what << std::endl;
+
+            Log::d("Looper", "[queueMessage] queued message what is %d", message->what);
             mMessageQueueEmptyCondition.notify_all();
             mMessageQueueMutex.unlock();
 
@@ -72,7 +73,7 @@ namespace cobox {
     }
 
     void* Looper::guardRun(void* rawLooper) {
-        std::cout << "[Looper][guardRun]" << std::endl;
+        Log::d("Looper", "[guardRun]");
         Looper* looper = static_cast<Looper*>(rawLooper);
         if (looper != NULL) {
             looper->run();
@@ -82,7 +83,7 @@ namespace cobox {
     }
 
     void Looper::run() {
-        std::cout << "[Looper][run]" << std::endl;
+        Log::d("Looper", "[run]");
         while (mIsAlive) {
             Message* message = nullptr;
 
@@ -129,7 +130,8 @@ namespace cobox {
             }
 
         }
-        std::cout << "[Looper][run] quit message queue loop" << std::endl;
+        
+        Log::i("Looper", "[run] quit message queue loop");
     }
 
     void Looper::cleanMessageQueue() {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "handler.h"
-#include <iostream>
+#include <string>
 #include <functional>
 
 namespace cobox {
@@ -17,8 +17,8 @@ namespace cobox {
             Handler* getTarget();
 
         public:
-            void     sendToTarget();
-            void     toString(std::ostream& out);
+            void        sendToTarget();
+            std::string toString();
 
         public:
             int      what;

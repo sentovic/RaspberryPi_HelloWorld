@@ -1,6 +1,6 @@
 #include "handler.h"
 #include <stddef.h>
-#include <iostream>
+#include "log.h"
 #include "message.h"
 #include "system.h"
 
@@ -24,7 +24,7 @@ namespace cobox {
         if (message == nullptr) {
             return;
         }
-        std::cout << "[Handler][sendMessage] what is " << message->what << std::endl;
+        Log::d("Handler", "[sendMessage] what is %d", message->what);
 
         message->mMessageTime = System::millsecond() + delay;
         message->mTarget      = this;
@@ -38,7 +38,7 @@ namespace cobox {
     }
 
     void Handler::sendEmptyMessageDelayed(int what, uint64_t delay) {
-        std::cout << "[Handler][sendEmptyMessage] what is " << what << std::endl;
+        Log::d("Handler", "[sendEmptyMessage] what is %d", what);
         Message* msg = new Message();
         msg->mTarget      = this;
         msg->mMessageTime = System::millsecond() + delay;
@@ -49,7 +49,7 @@ namespace cobox {
     }
 
     void Handler::removeAllMeesagesAndCallbacks() {
-        std::cout << "[Handler][removeAllMeesagesAndCallbacks]" << std::endl;
+        Log::d("Handler", "[removeAllMeesagesAndCallbacks]");
         if (mLooper != nullptr) {
             mLooper->cleanMessageQueue();
         }
@@ -74,9 +74,7 @@ namespace cobox {
     }
 
     void Handler::handleMessage(Message* message) {
-        std::cout << "[Handler][handleMessage] message is ";
-        message->toString(std::cout);
-        std::cout << std::endl;
+        Log::d("Handler", "[handleMessage] message is " + message->toString());
 
         if (mHandleMessageCallback != nullptr) {
             mHandleMessageCallback(message);

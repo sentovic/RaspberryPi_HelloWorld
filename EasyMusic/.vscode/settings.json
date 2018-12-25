@@ -40,6 +40,7 @@
         "mutex": "cpp",
         "ratio": "cpp",
         "thread": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "cstdarg": "cpp"
     }
 }
