@@ -1,8 +1,8 @@
 #pragma once
 
-#include "lang.h"
 #include "handler.h"
 #include <iostream>
+#include <functional>
 
 namespace cobox {
 
@@ -27,9 +27,9 @@ namespace cobox {
             void*    anything;
             
         private:
-            Handler* mTarget;
-            Runnable mCallback;
-            uint64_t mMessageTime;
+            Handler*              mTarget;
+            std::function<void()> mCallback;
+            uint64_t              mMessageTime;
 
         private:
             static const uint64_t TIME_IGNORE = 0;

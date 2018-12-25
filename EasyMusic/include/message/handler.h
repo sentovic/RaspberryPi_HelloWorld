@@ -1,6 +1,5 @@
 #pragma once
 
-#include "lang.h"
 #include "looper.h"
 #include <functional>
 
@@ -18,8 +17,8 @@ namespace cobox {
             void sendEmptyMessage(int what);
             void sendEmptyMessageDelayed(int what, uint64_t delay);
             void removeAllMeesagesAndCallbacks();
-            void post(Runnable runnable);
-            void postDelayed(Runnable runnable, uint64_t delay);
+            void post(std::function<void()> runnable);
+            void postDelayed(std::function<void()> runnable, uint64_t delay);
 
         protected:
             friend class Looper;

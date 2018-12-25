@@ -100,7 +100,7 @@ namespace cobox {
                     if (message != nullptr) {
                         // Check message timestamp
                         uint64_t now = System::millsecond();
-                        uint64_t deltaTime = (message->mMessageTime - now);
+                        int64_t deltaTime = (message->mMessageTime - now);
                         if (deltaTime > 0) {
                             mMessageDelayCondition.wait_for(ulock, std::chrono::milliseconds(deltaTime));
                             continue;
@@ -115,9 +115,16 @@ namespace cobox {
 
             // Handle message
             if (message != NULL) {
-                Handler* handler = message->getTarget();
-                if (handler != NULL) {
-                    handler->handleMessage(message);
+                // Invoke callback first
+                std::function<void()> callback = message->mCallback;
+                if (callback != nullptr) {
+                    callback();
+                } else {
+                    // If no callback in message, send it to target handler
+                    Handler* handler = message->getTarget();
+                    if (handler != NULL) {
+                        handler->handleMessage(message);
+                    }
                 }
             }
 

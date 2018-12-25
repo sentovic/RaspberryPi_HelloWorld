@@ -4,22 +4,22 @@
 namespace cobox {
 
     Message::Message() : 
-                       mTarget(NULL), 
+                       mTarget(nullptr), 
                        what(0),
                        arg1(0),
                        arg2(0),
-                       anything(NULL),
-                       mCallback(NULL),
+                       anything(nullptr),
+                       mCallback(nullptr),
                        mMessageTime(TIME_IGNORE) {
 
     }
 
     Message::~Message() {
-        mTarget = NULL;
+        mTarget = nullptr;
         what = 0;
         arg1 = 0;
         arg2 = 0;
-        mCallback = NULL;
+        mCallback = nullptr;
     }
 
     void Message::bindTarget(Handler* target) {
@@ -31,7 +31,7 @@ namespace cobox {
     }
 
     void Message::sendToTarget() {
-        if (mTarget != NULL) {
+        if (mTarget != nullptr) {
             mTarget->sendMessage(this);
         }
     }
@@ -40,7 +40,7 @@ namespace cobox {
         out << "{ when=" << this->mMessageTime
             << ", what=" << this->what
             << ", target=" << this->mTarget
-            << ", callback=" << this->mCallback
+            << ", callback=" << &(this->mCallback)
             << " }";
     }
 }

@@ -55,11 +55,11 @@ namespace cobox {
         }
     }
 
-    void Handler::post(Runnable runnable) {
+    void Handler::post(std::function<void()> runnable) {
         postDelayed(runnable, 0);
     }
 
-    void Handler::postDelayed(Runnable runnable, uint64_t delay) {
+    void Handler::postDelayed(std::function<void()> runnable, uint64_t delay) {
         if (runnable == nullptr) {
             return;
         }

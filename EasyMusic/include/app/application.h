@@ -21,8 +21,9 @@ namespace cobox {
         virtual void onHandleMessage(Message* message);
 
     protected:
-        static const int MSG_APP_START = 0x1000;
-        static const int MSG_APP_STOP  = 0x1001;
+        static const int MSG_APP_START         = 0x1000;
+        static const int MSG_APP_STOP          = 0x1001;
+        static const int MSG_APP_CONFIG_CHANGE = 0x1002;
 
     private:
         Handler* mApplicationHandler;
