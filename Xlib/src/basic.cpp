@@ -157,6 +157,13 @@ void XBase::loop() {
                 }
             } break;
 
+            case GraphicsExpose: {
+                printf("[XBase][loop] Graphic exposed, should redraw\n");
+                if (mXRenderer != nullptr) {
+                    mXRenderer->render();
+                }
+            } break;
+
             case FocusIn: {
                 printf("[XBase][loop] Window focus changed, get focus\n");
             } break;

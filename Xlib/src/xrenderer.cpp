@@ -42,11 +42,22 @@ bool XRenderer::installFonts() {
 
 void XRenderer::initializeRenderThread() {
     std::thread {[this](){
-        printf("[RenderThread]\n");
         while (true) {
             std::chrono::milliseconds duration(500);
             std::this_thread::sleep_for(duration);
-            XSendEvent(this->mDisplay, this->mWindow)
+        
+            XEvent event = { 0 };
+            event.type = GraphicsExpose;
+            event.xgraphicsexpose.send_event = True;
+            event.xgraphicsexpose.display = this->mDisplay;
+            event.xgraphicsexpose.drawable = this->mWindow;
+            event.xgraphicsexpose.width = this->mWindowWidth;
+            event.xgraphicsexpose.height = this->mWindowHeight;
+            event.xgraphicsexpose.x = 0;
+            event.xgraphicsexpose.y = 0;
+
+            Status status = XSendEvent(this->mDisplay, this->mWindow, 
+                False, ExposureMask, &event);
         }
     }}.detach();
 }
@@ -83,16 +94,21 @@ bool XRenderer::onRenderer() {
     int direction;
     int ascent, descent;
     XCharStruct overall;
-    char text[256] = { 0 };
     
-    uint64_t tictoc = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
-    long hour = (tictoc / 1000 / 60 / 60) % 24;
-    long minute = (tictoc / 1000 / 60) % 60;
-    long second = (tictoc / 1000) % 60;
-    sprintf(text, "%02d:%02d:%02d", 
-        hour, minute, second
-    );
+    auto tt = std::chrono::system_clock::to_time_t
+	(std::chrono::system_clock::now());
+	struct tm* ptm = localtime(&tt);
+	char text[64] = { 0 };
+	sprintf(text, "%04d-%02d-%02d %02d:%02d:%02d %d",
+		(int) ptm->tm_year + 1900,
+        (int) ptm->tm_mon + 1,
+        (int) ptm->tm_mday,
+        (int) ptm->tm_hour,
+        (int) ptm->tm_min,
+        (int) ptm->tm_sec,
+        i++);
 
+    printf("[XRenderer] i = %d\n", i);
     int textLength = strlen(text);
 
     XSetForeground(mDisplay, mGc, 0x0000FF00);

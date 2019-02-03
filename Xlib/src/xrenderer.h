@@ -23,4 +23,6 @@ private:
     GC mGc;
     int mWindowWidth;
     int mWindowHeight;
+
+    int i;
 };
