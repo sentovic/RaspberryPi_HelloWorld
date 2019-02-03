@@ -41,7 +41,7 @@ namespace cobox {
                va_start(args, fmt);
 
                cout << "\033[0m" << tag << " D ";
-               printf(fmt.c_str(), args);
+               vprintf(fmt.c_str(), args);
                cout << "\033[0m" << endl;
 
                va_end(args);
@@ -55,7 +55,7 @@ namespace cobox {
 
                cout << "\033[0;" << FG_GREEN << ";" << BG_BLACK << "m"
                     << tag << " I ";
-               printf(fmt.c_str(), args);
+               vprintf(fmt.c_str(), args);
                cout << "\033[0m" << endl;
                
                va_end(args);
@@ -69,7 +69,7 @@ namespace cobox {
 
                cout << "\033[0;" << FG_YELLOW << ";" << BG_BLACK << "m"
                     << tag << " W ";
-               printf(fmt.c_str(), args);
+               vprintf(fmt.c_str(), args);
                cout << "\033[0m" << endl;
                
                va_end(args);
@@ -83,7 +83,7 @@ namespace cobox {
 
                cout << "\033[0;" << FG_RED << ";" << BG_BLACK << "m"
                     << tag << " E ";
-               printf(fmt.c_str(), args);
+               vprintf(fmt.c_str(), args);
                cout << "\033[0m" << endl;
                
                va_end(args);

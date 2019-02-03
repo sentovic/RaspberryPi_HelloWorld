@@ -19,9 +19,6 @@ namespace cobox {
     void Application::run() {
         Log::d("Application", "[run]");
         mApplicationHandler->sendEmptyMessage(Application::MSG_APP_START);
-        {// Debug
-            mApplicationHandler->sendEmptyMessage(Application::MSG_APP_STOP);
-        }
         Looper::run();
     }
 
